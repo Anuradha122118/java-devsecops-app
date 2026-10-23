@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 public class App {
     public static String message() {
-        return "Java DevSecOps application is running!";
+        return "Java DevSecOps CI/CD pipeline is running!";
     }
 
     public static void main(String[] args) throws IOException {

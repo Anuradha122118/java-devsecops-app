@@ -1,4 +1,4 @@
-pipeline {
+﻿pipeline {
     agent any
 
     tools {
@@ -9,6 +9,7 @@ pipeline {
         SONAR_TOKEN = credentials('SONAR_TOKEN')
         SONAR_PROJECT_KEY = 'Anuradha122118_java-devsecops-app'
         DOCKER_IMAGE = 'java-devsecops-app'
+        TRIVY_IMAGE = 'aquasec/trivy:0.76.1'
     }
 
     stages {
@@ -44,11 +45,26 @@ pipeline {
                 '''
             }
         }
+
+        stage('Trivy Image Scan') {
+            steps {
+                sh '''
+                    docker run --rm \
+                      -v /var/run/docker.sock:/var/run/docker.sock \
+                      -v trivy-cache:/root/.cache/ \
+                      ${TRIVY_IMAGE} image \
+                      --scanners vuln \
+                      --severity HIGH,CRITICAL \
+                      --exit-code 1 \
+                      ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo 'Build, tests, SonarQube analysis, and Docker build completed successfully!'
+            echo 'Build, tests, SonarQube analysis, Docker build, and Trivy scan completed successfully!'
         }
         failure {
             echo 'Pipeline failed. Check Console Output for details.'

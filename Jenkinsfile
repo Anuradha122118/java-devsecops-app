@@ -8,6 +8,7 @@ pipeline {
     environment {
         SONAR_TOKEN = credentials('SONAR_TOKEN')
         SONAR_PROJECT_KEY = 'Anuradha122118_java-devsecops-app'
+        DOCKER_IMAGE = 'java-devsecops-app'
     }
 
     stages {
@@ -34,11 +35,20 @@ pipeline {
                 '''
             }
         }
+
+        stage('Docker Build') {
+            steps {
+                sh '''
+                    docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
+                    docker images ${DOCKER_IMAGE}
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo 'Build, tests, and SonarQube analysis completed successfully!'
+            echo 'Build, tests, SonarQube analysis, and Docker build completed successfully!'
         }
         failure {
             echo 'Pipeline failed. Check Console Output for details.'

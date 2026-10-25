@@ -7,7 +7,7 @@ class AppTest {
     @Test
     void shouldReturnApplicationMessage() {
         assertEquals(
-            "Java DevSecOps application is running!",
+            "Java DevSecOps CI/CD pipeline is running!",
             App.message()
         );
     }
